@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Find Book</title>
+</head>
+<body>
+    <h1>Find Book</h1>
+    <form method="post">
+        {% csrf_token %}
+        <input type="text" name="search_query" placeholder="Search by name">
+        <button type="submit">Search</button>
+    </form>
+    <ul>
+        {% for book in books %}
+            <li>{{ book.name }} by {{ book.author }}</li>
+        {% empty %}
+            <li>No books found.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
