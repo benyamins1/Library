@@ -1,5 +1,8 @@
 # library/views.py
+from collections import UserDict
+from pyexpat.errors import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from .models import Book, Customer, Loan
@@ -48,38 +51,57 @@ def loan_book(request, book_id):
 
 
 
+def index(request):
+    print("index function entered !!!!!!!!!!!!")
+    return render(request, "index.html")
+
+
+def logout(request):
+    print("logout function entered !!!!!!!!!!!!")
+    logout(request)
+    return redirect("index")
+
+
+def register(request):
+    print("--- login function entered ---")
+    try:
+        if request.method == "POST":
+            username = request.POST.get("username")
+            password = request.POST.get("password")
+            print(f"username={username}. passowrd={password}")
+
+            user = UserDict.objects.create_user(username, "", password)
+            user.save()
+
+    except Exception as e:
+        messages.error(request, f"Error occured on registration {e}.")
+    messages.success(request, f"User Registered Successfuly.")
+    return redirect("index")
 
 
 def login(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+    print("login function entered !!!!!!!!!!!!")
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        print(f"username={username}. passowrd={password}")
+
+        # Authenticate the user - validating user password. return user object if valid
         user = authenticate(request, username=username, password=password)
+        print(f"authenticate passed. user is:{user}")
+
         if user is not None:
+            # If the credentials are correct, log in the user
             login(request, user)
-            return redirect('login')  # Redirect to a home page or other view
-       
-            # Display an error message
-
-    else: 
-        render(request, 'login.html')
-
-def logout(request):
-    logout(request)
-    return render(request, 'logout.html')
-
-def register(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            # Create a corresponding Customer object with city and age fields
-            # and associate it with the new user
-            return redirect('login')  # Redirect to the login page
-
+            print(f"** login passed. user is:{user}")
+            return redirect("playlist")
         else:
-            form = UserCreationForm()
+            print(f"!! error login. user is:{user}")
+            # If authentication fails, show an error message or redirect back to the login page
+            error_message = "Invalid credentials. Please try again."
+            return render(request, "index.html", {"error_message": error_message})
 
-    return render(request, 'register.html', {'form': form})
+    return redirect("index")
+
 
 
