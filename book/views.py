@@ -46,7 +46,7 @@ def loan_book(request, book_id):
         return_date = loan_date + timedelta(days=book.max_loan_days())
         loan = Loan.objects.create(customer=customer, book=book, loan_date=loan_date, return_date=return_date)
         return redirect('display_books')
-    customers = Customer.objects.all()
+    customers = UserDict.objects.all()
     return render(request, 'loan_book.html', {'book': book, 'customers': customers})
 
 
@@ -59,24 +59,45 @@ def index(request):
 def logout(request):
     print("logout function entered !!!!!!!!!!!!")
     logout(request)
-    return redirect("index")
+    #return redirect("index")
+    return render(request, 'logout.html')
 
+
+# def register(request):
+#     print("--- login function entered ---")
+#     try:
+#         if request.method == "POST":
+#             username = request.POST.get("username")
+#             password = request.POST.get("password")
+#             print(f"username={username}. passowrd={password}")
+            
+#             user_c = Customer.objects.create_user(username, "", password)
+#             user_c.save()
+        
+#     except Exception as e:
+#         messages.error(request, f"Error occured on registration {e}.")
+#     messages.success(request, f"User Registered Successfuly.")
+#     return redirect("index")
+from django.contrib.auth.models import User
 
 def register(request):
-    print("--- login function entered ---")
+    print("--- register function entered ---")
     try:
         if request.method == "POST":
             username = request.POST.get("username")
             password = request.POST.get("password")
-            print(f"username={username}. passowrd={password}")
-
-            user = UserDict.objects.create_user(username, "", password)
-            user.save()
-
+            print(f"username={username}. password={password}")
+            
+            if Customer.objects.filter(username=username).exists():
+                messages.error(request, "Username already exists.")
+            else:
+                user_c = Customer.objects.create_user(username, "", password)
+                user_c.save()
+                messages.success(request, "User Registered Successfully.")
+        return redirect("index")
     except Exception as e:
-        messages.error(request, f"Error occured on registration {e}.")
-    messages.success(request, f"User Registered Successfuly.")
-    return redirect("index")
+        messages.error(request, f"Error occurred on registration: {e}")
+        return redirect("index")
 
 
 def login(request):
@@ -87,16 +108,16 @@ def login(request):
         print(f"username={username}. passowrd={password}")
 
         # Authenticate the user - validating user password. return user object if valid
-        user = authenticate(request, username=username, password=password)
-        print(f"authenticate passed. user is:{user}")
+        user_c = authenticate(request, username=username, password=password)
+        print(f"authenticate passed. user is:{user_c}")
 
-        if user is not None:
+        if user_c is not None:
             # If the credentials are correct, log in the user
-            login(request, user)
-            print(f"** login passed. user is:{user}")
+            login(request, user_c)
+            print(f"** login passed. user is:{user_c}")
             return redirect("playlist")
         else:
-            print(f"!! error login. user is:{user}")
+            print(f"!! error login. user is:{user_c}")
             # If authentication fails, show an error message or redirect back to the login page
             error_message = "Invalid credentials. Please try again."
             return render(request, "index.html", {"error_message": error_message})
