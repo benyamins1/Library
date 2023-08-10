@@ -30,8 +30,8 @@ class Customer( AbstractUser):
     def __str__(self):
         return self.name
         
-    class Meta:
-        verbose_name = "Customer"
+    # class Meta:
+    #     verbose_name = "Customer"
 
 class Loan(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
