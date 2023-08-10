@@ -35,5 +35,16 @@
 <!-- login form end -->
 {% endif %}
 
-<h1>Hello this is my pet store</h1>
+
+<body>
+  <h2>Logout</h2>
+  <p>Are you sure you want to log out?</p>
+  <form method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button type="submit">Logout</button>
+  </form>
+  <a href="{% url 'index' %}">Cancel</a>
+</body>
+
+<h1>Hello this is my book store</h1>
 <h2>Welcome!</h2>

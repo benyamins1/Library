@@ -58,7 +58,7 @@ def index(request):
 
 def logout(request):
     print("logout function entered !!!!!!!!!!!!")
-    logout(request)
+    #logout(request)
     #return redirect("index")
     return render(request, 'logout.html')
 
@@ -115,7 +115,7 @@ def login(request):
             # If the credentials are correct, log in the user
             login(request, user_c)
             print(f"** login passed. user is:{user_c}")
-            return redirect("playlist")
+            return redirect("index")
         else:
             print(f"!! error login. user is:{user_c}")
             # If authentication fails, show an error message or redirect back to the login page
