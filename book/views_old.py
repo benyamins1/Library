@@ -1,6 +1,6 @@
 # library/views.py
 from collections import UserDict
-from pyexpat.errors import messages
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
@@ -71,11 +71,12 @@ def register(request):
             password = request.POST.get("password")
             print(f"username={username}. passowrd={password}")
 
-            user_c = UserDict.objects.create_user(username, "", password)
+            user_c = Customer.objects.create(username, "", password)
             user_c.save()
 
     except Exception as e:
-        messages.error(request, f"Error occured on registration {e}.")
+        print("error")
+        #messages.error(request, f"Error occured on registration {e}.")
     messages.success(request, f"User Registered Successfuly.")
     return redirect("index")
 
