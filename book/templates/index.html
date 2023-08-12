@@ -39,10 +39,7 @@
 <body>
   <h2>Logout</h2>
   <p>Are you sure you want to log out?</p>
-  <form method="post" action="{% url 'logout' %}">
-      {% csrf_token %}
-      <button type="submit">Logout</button>
-  </form>
+  <a href="{% url 'logout' %}">logout</a>
   <a href="{% url 'index' %}">Cancel</a>
 </body>
 

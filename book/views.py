@@ -11,6 +11,7 @@ from datetime import date, timedelta
 
 def add_book(request):
     if request.method == 'POST':
+        print(request.POST)
         name = request.POST.get('name')
         author = request.POST.get('author')
         year_published = int(request.POST.get('year_published'))
@@ -56,11 +57,12 @@ def index(request):
     return render(request, "index.html")
 
 
-def logout(request):
+def logout_view(request):
     print("logout function entered !!!!!!!!!!!!")
-    #logout(request)
-    #return redirect("index")
-    return render(request, 'logout.html')
+    logout(request)
+    print("rrrrrr")
+    return redirect("index")
+    #return redirect('index.html')
 
 
 # def register(request):
@@ -100,7 +102,7 @@ def register(request):
         return redirect("index")
 
 
-def login(request):
+def login_view(request):
     print("login function entered !!!!!!!!!!!!")
     if request.method == "POST":
         username = request.POST.get("username")
