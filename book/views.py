@@ -1,6 +1,7 @@
 # library/views.py
 from collections import UserDict
 from django.contrib import messages
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
@@ -17,7 +18,7 @@ def add_book(request):
         year_published = int(request.POST.get('year_published'))
         book_type = int(request.POST.get('book_type'))
         book = Book.objects.create(name=name, author=author, year_published=year_published, book_type=book_type)
-        #book = Book.objects.create(name, author, year_published, book_type)
+        
         book.save()
         return redirect('display_books')
     return render(request, 'add_book.html')
@@ -26,7 +27,7 @@ def display_books(request):
     books = Book.objects.all()
     new_books=[]
     for book in books:
-        #new_book=dict(book)["loan"]=book.loans.filter(is_return=False)
+        
         new_books.append({"book": book,"loan":book.loans.filter(is_return=False)})
     print(new_books)
     return render(request, 'display_books.html', {'books': new_books})
@@ -56,7 +57,7 @@ def loan_book(request, book_id):
         customer_id = int(request.POST['customer_id'])
         customer = get_object_or_404(Customer, id=customer_id)
         loan_date = date.today()
-        #return_date = loan_date + timedelta(days=book.max_loan_days())
+        
         loan = Loan.objects.create(customer=customer, book=book, loan_date=loan_date)
         return redirect('display_books')
     customers = UserDict.objects.all()
@@ -74,24 +75,7 @@ def logout_view(request):
     logout(request)
     print("rrrrrr")
     return redirect("index")
-    #return redirect('index.html')
-
-
-# def register(request):
-#     print("--- login function entered ---")
-#     try:
-#         if request.method == "POST":
-#             username = request.POST.get("username")
-#             password = request.POST.get("password")
-#             print(f"username={username}. passowrd={password}")
-            
-#             user_c = Customer.objects.create_user(username, "", password)
-#             user_c.save()
-        
-#     except Exception as e:
-#         messages.error(request, f"Error occured on registration {e}.")
-#     messages.success(request, f"User Registered Successfuly.")
-#     return redirect("index")
+    
 from django.contrib.auth.models import User
 
 def register(request):
