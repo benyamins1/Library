@@ -24,7 +24,19 @@ def add_book(request):
 
 def display_books(request):
     books = Book.objects.all()
-    return render(request, 'display_books.html', {'books': books})
+    new_books=[]
+    for book in books:
+        #new_book=dict(book)["loan"]=book.loans.filter(is_return=False)
+        new_books.append({"book": book,"loan":book.loans.filter(is_return=False)})
+    print(new_books)
+    return render(request, 'display_books.html', {'books': new_books})
+
+def return_book(request,book_id):
+    loan=Loan.objects.filter(book_id=book_id,is_return=False)[0]
+    loan.return_date=date.today()
+    loan.is_return=True
+    loan.save()
+    return redirect('display_books')
 
 def find_book(request):
     if request.method == 'POST':
@@ -44,8 +56,8 @@ def loan_book(request, book_id):
         customer_id = int(request.POST['customer_id'])
         customer = get_object_or_404(Customer, id=customer_id)
         loan_date = date.today()
-        return_date = loan_date + timedelta(days=book.max_loan_days())
-        loan = Loan.objects.create(customer=customer, book=book, loan_date=loan_date, return_date=return_date)
+        #return_date = loan_date + timedelta(days=book.max_loan_days())
+        loan = Loan.objects.create(customer=customer, book=book, loan_date=loan_date)
         return redirect('display_books')
     customers = UserDict.objects.all()
     return render(request, 'loan_book.html', {'book': book, 'customers': customers})

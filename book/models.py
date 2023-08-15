@@ -35,9 +35,9 @@ class Customer( AbstractUser):
 
 class Loan(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="loans")
     loan_date = models.DateField()
-    return_date = models.DateField()
-
+    return_date = models.DateField(null=True,blank=True)
+    is_return=models.BooleanField(default=False)
     def __str__(self):
         return f"Loan ID: {self.pk} - {self.customer.name} - {self.book.name}"
