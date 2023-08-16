@@ -9,7 +9,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import Book, Customer, Loan
 from datetime import date, timedelta
 
-
+################## ADD BOOK ########################################
 def add_book(request):
     if request.method == 'POST':
         print(request.POST)
@@ -22,7 +22,7 @@ def add_book(request):
         book.save()
         return redirect('display_books')
     return render(request, 'add_book.html')
-
+############## DISPLAY BOOK #########################################
 def display_books(request):
     books = Book.objects.all()
     new_books=[]
@@ -38,7 +38,7 @@ def return_book(request,book_id):
     loan.is_return=True
     loan.save()
     return redirect('display_books')
-
+################### FIND BOOK ##########################
 def find_book(request):
     results=[]
     search_query = request.GET.get('search')
@@ -49,12 +49,12 @@ def find_book(request):
         return render(request, 'find_book.html', {'results': results, 'search_query': search_query})
     return render(request, 'index.html')
     #return render(request, 'find_book.html')
-
+################ RMOVE BOOK ######################
 def remove_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     book.delete()
     return redirect('display_books')
-
+################# LOAN BOOK #############################
 def loan_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     if request.method == 'POST':
@@ -70,12 +70,12 @@ def loan_book(request, book_id):
     return render(request, 'loan_book.html', {'book': book, 'customers': customers})
 
 
-
+#################### INDEX #################################
 def index(request):
     print("index function entered !!!!!!!!!!!!")
     return render(request, "index.html")
 
-
+################## LOGOUT ##############################
 def logout_view(request):
     print("logout function entered !!!!!!!!!!!!")
     logout(request)
@@ -85,6 +85,7 @@ def logout_view(request):
     
 from django.contrib.auth.models import User
 
+############### REGISTER ###################################
 def register(request):
     print("--- register function entered ---")
     try:
@@ -104,7 +105,7 @@ def register(request):
         messages.error(request, f"Error occurred on registration: {e}")
         return redirect("index")
 
-
+################## LOGIN ################################
 def login_view(request):
     print("login function entered !!!!!!!!!!!!")
     if request.method == "POST":
