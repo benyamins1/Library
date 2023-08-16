@@ -41,7 +41,9 @@ def return_book(request,book_id):
 ################### FIND BOOK ##########################
 def find_book(request):
     results=[]
-    search_query = request.GET.get('search')
+    search_query = request.POST.get('search')
+    print("hellooo")
+    #search_query = request.GET.get('search')
     # if request.method == 'POST':
     if search_query:
         # query = request.POST['search_query']
