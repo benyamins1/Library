@@ -40,11 +40,15 @@ def return_book(request,book_id):
     return redirect('display_books')
 
 def find_book(request):
-    if request.method == 'POST':
-        query = request.POST['search_query']
-        books = Book.objects.filter(name__icontains=query)
-        return render(request, 'display_books.html', {'books': books})
-    return render(request, 'find_book.html')
+    results=[]
+    search_query = request.GET.get('search')
+    # if request.method == 'POST':
+    if search_query:
+        # query = request.POST['search_query']
+        results = Book.objects.filter(name__icontains=search_query)
+        return render(request, 'find_book.html', {'results': results, 'search_query': search_query})
+    return render(request, 'index.html')
+    #return render(request, 'find_book.html')
 
 def remove_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
@@ -54,13 +58,15 @@ def remove_book(request, book_id):
 def loan_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     if request.method == 'POST':
+        assert 'customer_id' in request.POST,"Missing 'customer_id' in POST "
+
         customer_id = int(request.POST['customer_id'])
         customer = get_object_or_404(Customer, id=customer_id)
         loan_date = date.today()
         
         loan = Loan.objects.create(customer=customer, book=book, loan_date=loan_date)
         return redirect('display_books')
-    customers = UserDict.objects.all()
+    customers = Customer.objects.all()
     return render(request, 'loan_book.html', {'book': book, 'customers': customers})
 
 
@@ -74,7 +80,8 @@ def logout_view(request):
     print("logout function entered !!!!!!!!!!!!")
     logout(request)
     print("rrrrrr")
-    return redirect("index")
+    #return redirect('login')
+    return render(request,'logout.html')
     
 from django.contrib.auth.models import User
 
@@ -120,7 +127,8 @@ def login_view(request):
             error_message = "Invalid credentials. Please try again."
             return render(request, "index.html", {"error_message": error_message})
 
-    return redirect("index")
+    #return render("log_in_out.html")
+    return render(request, 'log_in_out.html')
 
 
 
