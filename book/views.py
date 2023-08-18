@@ -39,18 +39,28 @@ def return_book(request,book_id):
     loan.save()
     return redirect('display_books')
 ################### FIND BOOK ##########################
-def find_book(request):
-    results=[]
-    search_query = request.POST.get('search')
-    print("hellooo")
-    #search_query = request.GET.get('search')
-    # if request.method == 'POST':
-    if search_query:
-        # query = request.POST['search_query']
-        results = Book.objects.filter(name__icontains=search_query)
-        return render(request, 'find_book.html', {'results': results, 'search_query': search_query})
-    return render(request, 'index.html')
+# def find_book(request):
+#     results=[]
+#     search_query = request.POST.get('search')
+#     print("hellooo")
+#     #search_query = request.GET.get('search')
+#     # if request.method == 'POST':
+#     if search_query:
+#         # query = request.POST['search_query']
+#         results = Book.objects.filter(name__icontains=search_query)
+#         return render(request, 'find_book.html', {'results': results, 'search_query': search_query})
+#     return render(request, 'index.html')
     #return render(request, 'find_book.html')
+def find_book(request):
+    query = request.GET.get('query', '')  # Get the search query from the URL parameter
+    books = Book.objects.filter(name__icontains=query)
+
+    context = {
+        'books': books,
+        'query': query,
+    }
+
+    return render(request, 'find_book.html', context)
 ################ RMOVE BOOK ######################
 def remove_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
@@ -75,7 +85,13 @@ def loan_book(request, book_id):
 #################### INDEX #################################
 def index(request):
     print("index function entered !!!!!!!!!!!!")
-    return render(request, "index.html")
+    query=request.GET.get('q')
+    books=[]
+    if query:
+        books=Book.objects.filter(name__contains=query)
+
+    #if request.method=="GET":
+    return render(request, "index.html",{'books': books})
 
 ################## LOGOUT ##############################
 def logout_view(request):

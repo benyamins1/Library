@@ -20,6 +20,58 @@
       background-color: #f2f2f2;
       padding: 25px;
     }
+    .search-resaults-container {
+      margin: 0 auto;
+      width: 500px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .search-form {
+      display: flex;
+      flex-direction: row;
+      width: 200px;
+    }
+    .resaults-container{
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .card_book_containet {
+        margin: 0 auto;
+        height: 30px;
+        width: 80%;
+        margin-top: 10px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        border: solid black 1px;
+      }
+
+      .book_data {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+      }
+
+      .book_data p {
+        padding: 0px;
+        margin: 10px;
+        font-size: 1em;
+      }
+
+      .buttons {
+        display: flex;
+        width: 120px;
+        justify-content: space-between;
+        align-items: center;
+        margin-right: 10px;
+      }
+
+      .buttons button {
+        width: 50px;
+        height: 20px;
+      }
   </style>
 </head>
 
@@ -42,11 +94,11 @@
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
             <li><a href="#">Loan Book</a></li>
-            <li><a href="#">Find Book</a></li>
-            <li><a href="#">Remove book</a></li>
+            <li><a href="{% url 'find_book' %}">Find Book</a></li>
+            <li><a href="{$ 'remove_book' book.id %}">Remove Book</a></li>
             <li><a href="{% url 'display_books' %}">Display Books</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href="#">Separated link</a></li>
+            <li><a href="'loan_book' book.id'">Loan Book</a></li>
           </ul>
         </div>
       </div>
@@ -64,19 +116,26 @@
       </div>
     </div>
   </nav>
-  <div class="jumbotron">
-    <div class="container text-center">
-      <nav>
-        <ul>
-            <li><a href="{% url 'index' %}">Home</a></li>
-            <li><a href="{% url 'find_book' %}">Find Book</a></li>
-            <li><a href="{% url 'display_books' %}">display Books</a></li>
-            
-            <!-- Add more navigation links as needed -->
-        </ul>
-    </nav>
+ <div class="search-resaults-container">
+<form class="search-form" method="GET" action="{% url 'index' %}"> 
+  <input name="q" type="text">
+  <button>search</button>
+</form>
+<div class="resaults-container">
+  <div class="card_book_containet">
+    <div class="book_data">
+      <p>name</p>
+      <p>year</p>
+      <p>auter</p>
+      <p>type</p>
+    </div>
+    <div class="buttons">
+      <button>loan</button>
+      <button>remove</button>
     </div>
   </div>
+</div>
+ </div>
 
 
   <div class="container-fluid bg-3 text-center">
