@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
 
 from .models import Book, Customer, Loan, RemoveBookForm
 from datetime import date, timedelta
@@ -65,20 +66,48 @@ def find_book(request):
 ################ RMOVE BOOK ######################
 
 
+# def remove_book(request):
+    
+#     query = request.GET.get('query', '')  # Get the search query from the URL parameter
+#     books = Book.objects.filter(name__icontains=query)
+#     print("runnnnnn")
+#     context = {
+#         'books': books,
+#         'query': query,
+#     }
+
+#     return render(request,'remove_book.html')
+# {'test': 1}.get('test', )
 def remove_book(request):
-    query = request.GET.get('query', '')  # Get the search query from the URL parameter
-    books = Book.objects.filter(name__icontains=query)
+    book_id = request.GET.get('book_id')
+    book = Book.objects.filter(id=book_id)
+    if not book:
+        return HttpResponse("No book found for removal")
+
+    if request.method == 'POST':
+        book.delete()
+        return redirect('find_book')  # Redirect to a page displaying the list of books
 
     context = {
-        'books': books,
-        'query': query,
+        'book': book,
     }
+    return render(request, 'remove.html', context)
 
-    return render(request, 'remove_book.html', context)
+
+
+
+
+
+
 
 ################# LOAN BOOK #############################
-def loan_book(request, book_id):
-    book = get_object_or_404(Book, id=book_id)
+def loan_book(request):
+    book_id = request.GET.get('book_id')
+
+    book = Book.objects.filter(id=book_id)
+    if not book:
+        return HttpResponse("No book id supplied.")
+    
     if request.method == 'POST':
         assert 'customer_id' in request.POST,"Missing 'customer_id' in POST "
 

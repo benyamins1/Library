@@ -99,10 +99,10 @@
           <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
             <li><a href="#">Loan Book</a></li>
             <li><a href="{% url 'find_book' %}">Find Book</a></li>
-            <li><a href="{% url 'remove_book' %}">Remove Book</a></li>
+            <li><a href="{% url 'remove_book'  %}">Remove Book</a></li>
             <li><a href="{% url 'display_books' %}">Display Books</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href="'loan_book' book.id">Loan Book</a></li>
+            <li><a href="{% url 'loan_book' %}">Loan Book</a></li>
           </ul>
         </div>
       </div>
