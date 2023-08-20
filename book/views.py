@@ -5,9 +5,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.forms import UserCreationForm
-from .models import Book, Customer, Loan
+
+from .models import Book, Customer, Loan, RemoveBookForm
 from datetime import date, timedelta
+
 
 ################## ADD BOOK ########################################
 def add_book(request):
@@ -62,10 +63,19 @@ def find_book(request):
 
     return render(request, 'find_book.html', context)
 ################ RMOVE BOOK ######################
-def remove_book(request, book_id):
-    book = get_object_or_404(Book, id=book_id)
-    book.delete()
-    return redirect('display_books')
+
+
+def remove_book(request):
+    query = request.GET.get('query', '')  # Get the search query from the URL parameter
+    books = Book.objects.filter(name__icontains=query)
+
+    context = {
+        'books': books,
+        'query': query,
+    }
+
+    return render(request, 'remove_book.html', context)
+
 ################# LOAN BOOK #############################
 def loan_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)

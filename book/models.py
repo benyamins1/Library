@@ -1,7 +1,8 @@
+from django import forms
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
-
+from django import forms
 ### Create your models here book cusomer and loan.####
 
 class Book(models.Model):
@@ -43,3 +44,11 @@ class Loan(models.Model):
     is_return=models.BooleanField(default=False)
     def __str__(self):
         return f"Loan ID: {self.pk} - {self.customer.name} - {self.book.name}"
+    
+   
+
+class RemoveBookForm(forms.Form):
+    confirm_removal = forms.BooleanField(
+        required=True,
+        help_text="I confirm that I want to remove this book."
+    )
