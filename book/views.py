@@ -1,14 +1,12 @@
 # library/views.py
-from collections import UserDict
-from django.contrib import messages
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from datetime import date
 
-from .models import Book, Customer, Loan, RemoveBookForm
-from datetime import date, timedelta
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
+
+from .models import Book, Customer, Loan
 
 
 ################## ADD BOOK ########################################
@@ -20,26 +18,30 @@ def add_book(request):
         year_published = int(request.POST.get('year_published'))
         book_type = int(request.POST.get('book_type'))
         book = Book.objects.create(name=name, author=author, year_published=year_published, book_type=book_type)
-        
+
         book.save()
         return redirect('display_books')
     return render(request, 'add_book.html')
+
+
 ############## DISPLAY BOOK #########################################
 def display_books(request):
     books = Book.objects.all()
-    new_books=[]
+    new_books = []
     for book in books:
-        
-        new_books.append({"book": book,"loan":book.loans.filter(is_return=False)})
+        new_books.append({"book": book, "loan": book.loans.filter(is_return=False)})
     print(new_books)
     return render(request, 'display_books.html', {'books': new_books})
 
-def return_book(request,book_id):
-    loan=Loan.objects.filter(book_id=book_id,is_return=False)[0]
-    loan.return_date=date.today()
-    loan.is_return=True
+
+def return_book(request, book_id):
+    loan = Loan.objects.filter(book_id=book_id, is_return=False)[0]
+    loan.return_date = date.today()
+    loan.is_return = True
     loan.save()
     return redirect('display_books')
+
+
 ################### FIND BOOK ##########################
 # def find_book(request):
 #     results=[]
@@ -52,7 +54,7 @@ def return_book(request,book_id):
 #         results = Book.objects.filter(name__icontains=search_query)
 #         return render(request, 'find_book.html', {'results': results, 'search_query': search_query})
 #     return render(request, 'index.html')
-    #return render(request, 'find_book.html')
+# return render(request, 'find_book.html')
 def find_book(request):
     query = request.GET.get('query', '')  # Get the search query from the URL parameter
     books = Book.objects.filter(name__icontains=query)
@@ -63,11 +65,13 @@ def find_book(request):
     }
 
     return render(request, 'find_book.html', context)
+
+
 ################ RMOVE BOOK ######################
 
 
 # def remove_book(request):
-    
+
 #     query = request.GET.get('query', '')  # Get the search query from the URL parameter
 #     books = Book.objects.filter(name__icontains=query)
 #     print("runnnnnn")
@@ -78,15 +82,17 @@ def find_book(request):
 
 #     return render(request,'remove_book.html')
 # {'test': 1}.get('test', )
-def remove_book(request):
-    book_id = request.GET.get('book_id')
-    book = Book.objects.filter(id=book_id)
-    if not book:
-        return HttpResponse("No book found for removal")
 
-    if request.method == 'POST':
+def remove_book(request, book_id = 4):
+
+    if request.method == 'POST' and request.POST['book_id']:
+        book_id = request.POST['book_id']
+        book = Book.objects.filter(id=book_id)
         book.delete()
         return redirect('find_book')  # Redirect to a page displaying the list of books
+
+    else:
+        book = Book.objects.filter(id=book_id)
 
     context = {
         'book': book,
@@ -94,27 +100,20 @@ def remove_book(request):
     return render(request, 'remove.html', context)
 
 
-
-
-
-
-
-
 ################# LOAN BOOK #############################
-def loan_book(request):
-    book_id = request.GET.get('book_id')
+def loan_book(request, book_id):
 
-    book = Book.objects.filter(id=book_id)
+    book = Book.objects.filter(id=book_id).get()
     if not book:
-        return HttpResponse("No book id supplied.")
-    
+        return HttpResponse("Book not found.")
+
     if request.method == 'POST':
-        assert 'customer_id' in request.POST,"Missing 'customer_id' in POST "
+        assert 'customer_id' in request.POST, "Missing 'customer_id' in POST "
 
         customer_id = int(request.POST['customer_id'])
         customer = get_object_or_404(Customer, id=customer_id)
         loan_date = date.today()
-        
+
         loan = Loan.objects.create(customer=customer, book=book, loan_date=loan_date)
         return redirect('display_books')
     customers = Customer.objects.all()
@@ -124,23 +123,23 @@ def loan_book(request):
 #################### INDEX #################################
 def index(request):
     print("index function entered !!!!!!!!!!!!")
-    query=request.GET.get('q')
-    books=[]
+    query = request.GET.get('q')
+    books = []
     if query:
-        books=Book.objects.filter(name__contains=query)
+        books = Book.objects.filter(name__contains=query)
 
-    #if request.method=="GET":
-    return render(request, "index.html",{'books': books})
+    # if request.method=="GET":
+    return render(request, "index.html", {'books': books})
+
 
 ################## LOGOUT ##############################
 def logout_view(request):
     print("logout function entered !!!!!!!!!!!!")
     logout(request)
     print("rrrrrr")
-    #return redirect('login')
-    return render(request,'logout.html')
-    
-from django.contrib.auth.models import User
+    # return redirect('login')
+    return render(request, 'logout.html')
+
 
 ############### REGISTER ###################################
 def register(request):
@@ -150,7 +149,7 @@ def register(request):
             username = request.POST.get("username")
             password = request.POST.get("password")
             print(f"username={username}. password={password}")
-            
+
             if Customer.objects.filter(username=username).exists():
                 messages.error(request, "Username already exists.")
             else:
@@ -161,6 +160,7 @@ def register(request):
     except Exception as e:
         messages.error(request, f"Error occurred on registration: {e}")
         return redirect("index")
+
 
 ################## LOGIN ################################
 def login_view(request):
@@ -185,8 +185,5 @@ def login_view(request):
             error_message = "Invalid credentials. Please try again."
             return render(request, "index.html", {"error_message": error_message})
 
-    #return render("log_in_out.html")
+    # return render("log_in_out.html")
     return render(request, 'log_in_out.html')
-
-
-

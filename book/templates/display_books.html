@@ -9,7 +9,7 @@
     <h1>Book List</h1>
     <ul>
         {% for book in books %}
-        <li>{{ book.book.name }} by {{ book.book.author }} <a href="{% url 'remove_book' book_id=book.book.id %}"> delete</a></li>
+        <li>{{ book.book.name }} by {{ book.book.author }} <a href="{% url 'remove_book' book_id=book.book.id %}"> Delete this book</a></li>
         {% if not book.loan  %}
         <form method="post" action="{% url 'loan_book' book_id=book.book.id %}">
             {% csrf_token %}
