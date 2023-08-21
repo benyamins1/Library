@@ -43,18 +43,7 @@ def return_book(request, book_id):
 
 
 ################### FIND BOOK ##########################
-# def find_book(request):
-#     results=[]
-#     search_query = request.POST.get('search')
-#     print("hellooo")
-#     #search_query = request.GET.get('search')
-#     # if request.method == 'POST':
-#     if search_query:
-#         # query = request.POST['search_query']
-#         results = Book.objects.filter(name__icontains=search_query)
-#         return render(request, 'find_book.html', {'results': results, 'search_query': search_query})
-#     return render(request, 'index.html')
-# return render(request, 'find_book.html')
+
 def find_book(request):
     query = request.GET.get('query', '')  # Get the search query from the URL parameter
     books = Book.objects.filter(name__icontains=query)
@@ -70,18 +59,6 @@ def find_book(request):
 ################ RMOVE BOOK ######################
 
 
-# def remove_book(request):
-
-#     query = request.GET.get('query', '')  # Get the search query from the URL parameter
-#     books = Book.objects.filter(name__icontains=query)
-#     print("runnnnnn")
-#     context = {
-#         'books': books,
-#         'query': query,
-#     }
-
-#     return render(request,'remove_book.html')
-# {'test': 1}.get('test', )
 
 def remove_book(request, book_id = 4):
 
